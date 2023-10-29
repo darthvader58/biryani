@@ -9,3 +9,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.create-select {
+  display: flex;
+  width: 320px;
+  height: 48px;
+  padding: 10px 12px 10px 16px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.katex-YourComponent {
+  color: 5BC0BE;
+}
+
+
