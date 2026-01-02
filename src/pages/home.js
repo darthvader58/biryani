@@ -406,8 +406,7 @@ const Home = ({ user }) => {
                 imageUrl: uploadMethod === 'url' ? imageUrl : null
             };
 
-            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-            const response = await axios.post(`${apiUrl}/api/analyze-problem`, payload);
+            const response = await axios.post('/api/analyze-problem', payload);
             setResults(response.data);
             toast.dismiss();
             toast.success('Analysis complete!');
