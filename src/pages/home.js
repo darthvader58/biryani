@@ -25,10 +25,103 @@ const Home = ({ user }) => {
     const [ocrLoading, setOcrLoading] = useState(false);
     const [results, setResults] = useState(null);
     const [error, setError] = useState('');
-    const [uploadMethod, setUploadMethod] = useState('file'); // 'file', 'camera', or 'url'
+    const [uploadMethod, setUploadMethod] = useState('file'); // 'file', 'camera', 'url', or 'separate'
     const [showCamera, setShowCamera] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
+    
+    // Separate upload states
+    const [problemFiles, setProblemFiles] = useState([]);
+    const [solutionFiles, setSolutionFiles] = useState([]);
+    const [problemText, setProblemText] = useState('');
+    const [solutionText, setSolutionText] = useState('');
     const webcamRef = useRef(null);
+
+    // Handle separate file uploads with OpenAI Vision OCR
+    const handleSeparateUpload = async (e, type) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        console.log(`Separate upload - ${type}:`, file.name, 'Type:', file.type);
+
+        if (type === 'problem') {
+            setProblemFiles([file]);
+            setProblemText(''); // Clear previous text
+        } else {
+            setSolutionFiles([file]);
+            setSolutionText(''); // Clear previous text
+        }
+
+        // Extract text using Tesseract directly (since OpenAI is rate limited)
+        setOcrLoading(true);
+        toast.loading(`Extracting text from ${type}...`);
+
+        try {
+            let extractedText;
+            
+            if (file.type === 'application/pdf') {
+                // For PDFs, use Tesseract directly
+                const result = await Tesseract.recognize(file, 'eng');
+                extractedText = result.data.text;
+            } else {
+                // Use Tesseract for images
+                console.log(`Using Tesseract OCR for ${type} image`);
+                const result = await Tesseract.recognize(file, 'eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            console.log(`${type} OCR progress: ${(m.progress * 100).toFixed(1)}%`);
+                        }
+                    }
+                });
+                extractedText = result.data.text;
+            }
+
+            console.log(`${type} extracted text:`, extractedText.substring(0, 100) + '...');
+
+            if (type === 'problem') {
+                setProblemText(extractedText);
+            } else {
+                setSolutionText(extractedText);
+            }
+
+            toast.dismiss();
+            toast.success(`${type} text extracted successfully!`);
+        } catch (err) {
+            console.error(`${type} OCR Error:`, err);
+            toast.dismiss();
+            toast.error(`Failed to extract text from ${type}: ${err.message}`);
+        } finally {
+            setOcrLoading(false);
+        }
+    };
+
+    // Extract text using OpenAI Vision API
+    const extractTextWithOpenAI = async (file, type) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const base64Image = e.target.result;
+                    
+                    // Send to backend for OpenAI Vision processing
+                    const response = await axios.post('/api/extract-text', {
+                        image: base64Image,
+                        type: type
+                    });
+                    
+                    if (response.data.success) {
+                        resolve(response.data.extractedText);
+                    } else {
+                        reject(new Error(response.data.error || 'Failed to extract text'));
+                    }
+                } catch (error) {
+                    console.error('OpenAI Vision error:', error);
+                    reject(error);
+                }
+            };
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsDataURL(file);
+        });
+    };
 
     // Enhanced PDF text extraction with better error handling
     const extractTextFromPDF = async (file) => {
@@ -121,13 +214,16 @@ const Home = ({ user }) => {
     const onDrop = useCallback(async (acceptedFiles) => {
         const file = acceptedFiles[0];
         if (file) {
-            // Add to uploaded files list
+            // Clear previous extracted text and add to uploaded files list
+            setExtractedText('');
             setUploadedFiles(prev => [...prev, file]);
             setOcrLoading(true);
             
             const isPDF = file.type === 'application/pdf';
-            const loadingMessage = isPDF ? 'Processing PDF...' : 'Extracting text from image...';
+            const loadingMessage = isPDF ? 'Processing PDF...' : 'Extracting text...';
             toast.loading(loadingMessage);
+            
+            console.log('Processing file:', file.name, 'Type:', file.type);
             
             try {
                 let extractedText;
@@ -140,108 +236,36 @@ const Home = ({ user }) => {
                         toast.success('PDF text extracted successfully!');
                     } catch (pdfError) {
                         console.error('PDF text extraction failed:', pdfError);
-                        
-                        // Try OCR as fallback for scanned PDFs
-                        try {
-                            console.log('PDF appears to be scanned, trying OCR fallback...');
-                            toast.dismiss();
-                            toast.loading('Processing scanned PDF with OCR...', { duration: 10000 });
-                            
-                            // Convert first page of PDF to image for OCR
-                            const arrayBuffer = await file.arrayBuffer();
-                            
-                            // Use simpler PDF.js configuration for rendering
-                            const pdf = await pdfjsLib.getDocument({ 
-                                data: arrayBuffer,
-                                verbosity: 0
-                            }).promise;
-                            
-                            const page = await pdf.getPage(1);
-                            const viewport = page.getViewport({ scale: 2.0 });
-                            
-                            const canvas = document.createElement('canvas');
-                            const context = canvas.getContext('2d');
-                            canvas.height = viewport.height;
-                            canvas.width = viewport.width;
-                            
-                            // Render PDF page to canvas
-                            await page.render({ 
-                                canvasContext: context, 
-                                viewport: viewport 
-                            }).promise;
-                            
-                            console.log('PDF page rendered to canvas, starting OCR...');
-                            
-                            // Convert canvas to blob for OCR
-                            const blob = await new Promise(resolve => 
-                                canvas.toBlob(resolve, 'image/png', 0.95)
-                            );
-                            
-                            // Use Tesseract OCR on the rendered image
-                            const result = await Tesseract.recognize(blob, 'eng', {
-                                logger: m => {
-                                    if (m.status === 'recognizing text') {
-                                        console.log(`OCR progress: ${(m.progress * 100).toFixed(1)}%`);
-                                    }
-                                }
-                            });
-                            
-                            const ocrText = result.data.text.trim();
-                            console.log('OCR completed, text length:', ocrText.length);
-                            
-                            if (ocrText && ocrText.length > 10) {
-                                extractedText = ocrText;
-                                toast.dismiss();
-                                toast.success('Scanned PDF processed successfully with OCR!');
-                            } else {
-                                throw new Error('OCR could not extract readable text from the PDF');
-                            }
-                        } catch (ocrError) {
-                            console.error('OCR processing failed:', ocrError);
-                            throw new Error(`PDF processing failed. This appears to be a scanned or image-based PDF that couldn't be processed.\n\nAlternatives:\n• Convert to JPG/PNG and upload as image\n• Use camera to capture the content\n• Type the problem manually`);
-                        }
+                        toast.dismiss();
+                        toast.error('PDF processing failed. Please convert to image format.');
+                        setOcrLoading(false);
+                        return;
                     }
                 } else {
-                    // Use Tesseract.js for image OCR
+                    // Use Tesseract directly for now (since OpenAI is rate limited)
+                    console.log('Using Tesseract OCR for image');
                     const result = await Tesseract.recognize(file, 'eng', {
-                        logger: m => console.log(m)
+                        logger: m => {
+                            if (m.status === 'recognizing text') {
+                                console.log(`OCR progress: ${(m.progress * 100).toFixed(1)}%`);
+                            }
+                        }
                     });
                     extractedText = result.data.text;
+                    toast.dismiss();
+                    toast.success('Text extracted with OCR!');
                 }
                 
-                // Append to existing text if there's already content
-                setExtractedText(prev => {
-                    const newText = prev ? `${prev}\n\n--- From ${file.name} ---\n${extractedText}` : extractedText;
-                    return newText;
-                });
-                toast.dismiss();
-                toast.success(`Text extracted successfully from ${isPDF ? 'PDF' : 'image'}!`);
+                console.log('Extracted text:', extractedText.substring(0, 100) + '...');
+                
+                // Set the extracted text (don't append, replace)
+                setExtractedText(extractedText);
+                
             } catch (err) {
                 console.error('Extraction Error:', err);
-                console.error('Error stack:', err.stack);
                 toast.dismiss();
-                
-                // Show detailed error message
-                const errorMessage = err.message || 'Failed to extract text from file';
-                
-                if (errorMessage.includes('PDF') || errorMessage.includes('scanned')) {
-                    // Show multi-line error for PDF issues
-                    const lines = errorMessage.split('\n');
-                    toast.error(lines[0], { duration: 6000 });
-                    if (lines.length > 1) {
-                        setTimeout(() => {
-                            toast(lines.slice(1).join('\n'), { 
-                                duration: 8000,
-                                icon: '💡'
-                            });
-                        }, 500);
-                    }
-                } else {
-                    toast.error(errorMessage, { duration: 5000 });
-                }
-                
-                // Set error state for display
-                setError(errorMessage);
+                toast.error('Failed to extract text from file');
+                setError(err.message || 'Failed to extract text from file');
             } finally {
                 setOcrLoading(false);
             }
@@ -387,9 +411,22 @@ const Home = ({ user }) => {
             return;
         }
 
-        const problemText = uploadMethod === 'file' ? extractedText : imageUrl;
-        if (!problemText) {
-            setError(uploadMethod === 'file' ? 'Please upload an image first' : 'Please enter problem text or image URL');
+        let finalProblemText = '';
+        
+        // Get problem text based on upload method
+        if (uploadMethod === 'file') {
+            finalProblemText = extractedText;
+        } else if (uploadMethod === 'url') {
+            finalProblemText = imageUrl;
+                        } else if (uploadMethod === 'separate') {
+            // Combine problem and solution with clear separation
+            finalProblemText = `PROBLEM: ${problemText}\n\nSOLUTION: ${solutionText}`;
+        } else {
+            finalProblemText = extractedText;
+        }
+        
+        if (!finalProblemText) {
+            setError('Please provide problem text or upload files');
             return;
         }
 
@@ -401,9 +438,12 @@ const Home = ({ user }) => {
         try {
             const payload = {
                 userEmail: user.email,
-                problemText: problemText,
+                problemText: finalProblemText,
                 uploadMethod: uploadMethod,
-                imageUrl: uploadMethod === 'url' ? imageUrl : null
+                imageUrl: uploadMethod === 'url' ? imageUrl : null,
+                // Add separate texts for better analysis
+                separateProblem: uploadMethod === 'separate' ? problemText : null,
+                separateSolution: uploadMethod === 'separate' ? solutionText : null
             };
 
             const response = await axios.post('/api/analyze-problem', payload);
@@ -463,6 +503,16 @@ const Home = ({ user }) => {
                                 <path d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z" />
                             </svg>
                             Camera
+                        </button>
+                        <button 
+                            type="button"
+                            className={`method-btn ${uploadMethod === 'separate' ? 'active' : ''}`}
+                            onClick={() => setUploadMethod('separate')}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                            </svg>
+                            Separate
                         </button>
                         <button 
                             type="button"
@@ -716,6 +766,87 @@ const Home = ({ user }) => {
                             </div>
                         </div>
                     )}
+
+                    {uploadMethod === 'separate' && (
+                        <div className="separate-upload-section">
+                            <div className="upload-pair">
+                                <div className="upload-box">
+                                    <h4>Problem Statement</h4>
+                                    <div className="dropzone-small">
+                                        <input 
+                                            type="file" 
+                                            accept="image/*,application/pdf"
+                                            onChange={(e) => handleSeparateUpload(e, 'problem')}
+                                            style={{display: 'none'}}
+                                            id="problem-upload"
+                                        />
+                                        <label htmlFor="problem-upload" className="upload-label">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                                            </svg>
+                                            Upload Problem Image
+                                        </label>
+                                    </div>
+                                    {problemFiles.length > 0 && (
+                                        <div className="file-preview-small">
+                                            <span>{problemFiles[0].name}</span>
+                                            <button onClick={() => setProblemFiles([])}>×</button>
+                                        </div>
+                                    )}
+                                    {problemText && (
+                                        <div className="extracted-preview">
+                                            <h5>Extracted Problem:</h5>
+                                            <textarea 
+                                                value={problemText}
+                                                onChange={(e) => setProblemText(e.target.value)}
+                                                rows={3}
+                                                placeholder="Problem text will appear here..."
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="upload-box">
+                                    <h4>Your Solution</h4>
+                                    <div className="dropzone-small">
+                                        <input 
+                                            type="file" 
+                                            accept="image/*,application/pdf"
+                                            onChange={(e) => handleSeparateUpload(e, 'solution')}
+                                            style={{display: 'none'}}
+                                            id="solution-upload"
+                                        />
+                                        <label htmlFor="solution-upload" className="upload-label">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
+                                            </svg>
+                                            Upload Solution Image
+                                        </label>
+                                    </div>
+                                    {solutionFiles.length > 0 && (
+                                        <div className="file-preview-small">
+                                            <span>{solutionFiles[0].name}</span>
+                                            <button onClick={() => setSolutionFiles([])}>×</button>
+                                        </div>
+                                    )}
+                                    {solutionText && (
+                                        <div className="extracted-preview">
+                                            <h5>Extracted Solution:</h5>
+                                            <textarea 
+                                                value={solutionText}
+                                                onChange={(e) => setSolutionText(e.target.value)}
+                                                rows={3}
+                                                placeholder="Solution text will appear here..."
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="separate-upload-info">
+                                <p>📝 Upload your problem statement and solution separately for more accurate analysis</p>
+                            </div>
+                        </div>
+                    )}
                     
                     {error && <div className="error-message">{error}</div>}
                     
@@ -725,7 +856,8 @@ const Home = ({ user }) => {
                         disabled={loading || !user || 
                             (uploadMethod === 'file' && uploadedFiles.length === 0) || 
                             (uploadMethod === 'camera' && !extractedText) || 
-                            (uploadMethod === 'url' && !imageUrl)}
+                            (uploadMethod === 'url' && !imageUrl) ||
+                            (uploadMethod === 'separate' && (!problemText || !solutionText))}
                     >
                         {loading ? 'Analyzing...' : 'Analyze Problem'}
                     </button>

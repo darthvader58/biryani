@@ -169,7 +169,7 @@ const Dashboard = ({ user }) => {
                         {stats.total_problems > 0 && (
                             <div className="chart-container">
                                 <h3>Error Distribution</h3>
-                                <ResponsiveContainer width="100%" height={300}>
+                                <ResponsiveContainer width="100%" height={350}>
                                     <PieChart>
                                         <Pie
                                             data={[
@@ -179,9 +179,13 @@ const Dashboard = ({ user }) => {
                                             ]}
                                             cx="50%"
                                             cy="50%"
-                                            outerRadius={80}
+                                            outerRadius={70}
+                                            innerRadius={0}
                                             dataKey="value"
-                                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                            label={({ name, percent }) => 
+                                                percent > 0.05 ? `${name}: ${(percent * 100).toFixed(0)}%` : ''
+                                            }
+                                            labelLine={true}
                                         >
                                             {[
                                                 { name: 'Correct', value: stats.correct_solutions || 0, color: '#4CAF50' },
@@ -191,7 +195,6 @@ const Dashboard = ({ user }) => {
                                                 <Cell key={`cell-${index}`} fill={entry.color} />
                                             ))}
                                         </Pie>
-                                        <Tooltip />
                                     </PieChart>
                                 </ResponsiveContainer>
                             </div>
@@ -203,11 +206,40 @@ const Dashboard = ({ user }) => {
                                 <h3>Performance by Topic</h3>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <BarChart data={topicPerformance}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="topic" />
-                                        <YAxis />
-                                        <Tooltip />
-                                        <Bar dataKey="accuracy" fill="#2196F3" name="Accuracy %" />
+                                        <CartesianGrid 
+                                            strokeDasharray="3 3" 
+                                            stroke="var(--glass-border)" 
+                                        />
+                                        <XAxis 
+                                            dataKey="topic" 
+                                            tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                                            axisLine={{ stroke: 'var(--glass-border)' }}
+                                        />
+                                        <YAxis 
+                                            tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                                            axisLine={{ stroke: 'var(--glass-border)' }}
+                                            label={{ 
+                                                value: 'Accuracy %', 
+                                                angle: -90, 
+                                                position: 'insideLeft',
+                                                style: { textAnchor: 'middle', fill: 'var(--text-primary)' }
+                                            }}
+                                        />
+                                        <Tooltip 
+                                            contentStyle={{
+                                                backgroundColor: 'var(--glass-bg)',
+                                                border: '1px solid var(--glass-border)',
+                                                borderRadius: '12px',
+                                                color: 'var(--text-primary)',
+                                                backdropFilter: 'blur(20px)'
+                                            }}
+                                        />
+                                        <Bar 
+                                            dataKey="accuracy" 
+                                            fill="#2196F3" 
+                                            name="Accuracy %" 
+                                            radius={[4, 4, 0, 0]}
+                                        />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
@@ -219,12 +251,58 @@ const Dashboard = ({ user }) => {
                                 <h3>Recent Progress</h3>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <LineChart data={progressData}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="problem" />
-                                        <YAxis />
-                                        <Tooltip />
-                                        <Line type="monotone" dataKey="confidence" stroke="#4CAF50" name="Confidence %" />
-                                        <Line type="monotone" dataKey="correct" stroke="#2196F3" name="Correct %" />
+                                        <CartesianGrid 
+                                            strokeDasharray="3 3" 
+                                            stroke="var(--glass-border)" 
+                                        />
+                                        <XAxis 
+                                            dataKey="problem" 
+                                            tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                                            axisLine={{ stroke: 'var(--glass-border)' }}
+                                            label={{ 
+                                                value: 'Problem #', 
+                                                position: 'insideBottomLeft', 
+                                                offset: 0,
+                                                style: { textAnchor: 'middle', fill: 'var(--text-primary)' }
+                                            }}
+                                        />
+                                        <YAxis 
+                                            tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                                            axisLine={{ stroke: 'var(--glass-border)' }}
+                                            label={{ 
+                                                value: 'Percentage', 
+                                                angle: -90, 
+                                                position: 'insideLeft',
+                                                style: { textAnchor: 'middle', fill: 'var(--text-primary)' }
+                                            }}
+                                        />
+                                        <Tooltip 
+                                            contentStyle={{
+                                                backgroundColor: 'var(--glass-bg)',
+                                                border: '1px solid var(--glass-border)',
+                                                borderRadius: '12px',
+                                                color: 'var(--text-primary)',
+                                                backdropFilter: 'blur(20px)'
+                                            }}
+                                        />
+                                        <Line 
+                                            type="monotone" 
+                                            dataKey="confidence" 
+                                            stroke="#4CAF50" 
+                                            name="Confidence %" 
+                                            strokeWidth={3}
+                                            dot={{ fill: '#4CAF50', strokeWidth: 2, r: 5 }}
+                                            activeDot={{ r: 7, fill: '#4CAF50', stroke: '#fff', strokeWidth: 2 }}
+                                        />
+                                        <Line 
+                                            type="monotone" 
+                                            dataKey="correct" 
+                                            stroke="#2196F3" 
+                                            name="Correct %" 
+                                            strokeWidth={3}
+                                            dot={{ fill: '#2196F3', strokeWidth: 2, r: 5 }}
+                                            activeDot={{ r: 7, fill: '#2196F3', stroke: '#fff', strokeWidth: 2 }}
+                                        />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </div>

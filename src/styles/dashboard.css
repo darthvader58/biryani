@@ -410,35 +410,75 @@
   stroke: var(--glass-border);
 }
 
+/* General text styling */
 .recharts-text {
-  fill: var(--spotify-light-gray) !important;
-  font-weight: 600;
-  font-size: 12px;
+  fill: var(--text-primary) !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
 }
 
+/* Pie Chart Labels - Make them more visible and positioned better */
+.recharts-pie-label-text {
+  fill: white !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Pie Chart Label Lines */
+.recharts-pie-label-line {
+  stroke: var(--text-secondary) !important;
+  stroke-width: 1px !important;
+}
+
+/* Axis Labels */
+.recharts-cartesian-axis-tick-value {
+  fill: var(--text-secondary) !important;
+  font-weight: 500 !important;
+  font-size: 11px !important;
+}
+
+/* Legend Labels */
+.recharts-legend-item-text {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+/* Y-Axis Labels */
+.recharts-label {
+  fill: var(--text-primary) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+/* Tooltip Styling */
 .recharts-tooltip-wrapper {
   background: var(--glass-bg) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border) !important;
-  border-radius: 8px !important;
-  box-shadow: var(--glass-shadow) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
 }
 
 .recharts-default-tooltip {
   background: var(--glass-bg) !important;
   border: 1px solid var(--glass-border) !important;
-  border-radius: 8px !important;
-  color: var(--spotify-white) !important;
+  border-radius: 12px !important;
+  color: var(--text-primary) !important;
+  box-shadow: none !important;
 }
 
 .recharts-tooltip-label {
   color: var(--spotify-green) !important;
   font-weight: 700 !important;
+  font-size: 14px !important;
 }
 
 .recharts-tooltip-item {
-  color: var(--spotify-white) !important;
+  color: var(--text-primary) !important;
+  font-weight: 500 !important;
 }
 
 /* Mobile Responsive */
