@@ -192,3 +192,13 @@ docker run -p 8080:8080 formath-backend
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+<div align="center">
+
+**Made with &lt;3 by [Shashwat Raj](https://github.com/shashwatraj)**
+
+*Because everyone deserves to look good without the stress*
+
+[🌟 Star this repo](https://github.com/darthvader58/whatrobe) • [🐛 Report Bug](https://github.com/darthvader58/whatrobe/issues) • [💡 Request Feature](https://github.com/darthvader58/whatrobe/issues)
+
+</div>
