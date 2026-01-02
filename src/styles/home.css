@@ -8,45 +8,40 @@
 
 .hero-section {
   text-align: center;
-  padding: 80px 20px 60px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  margin: -20px -20px 40px -20px;
-  border-radius: 0 0 24px 24px;
-  border: 1px solid var(--glass-border);
-  color: var(--spotify-white);
+  padding: 60px 20px 40px;
+  background: transparent;
+  color: var(--text-primary);
   position: relative;
-  overflow: hidden;
 }
 
 
 
 .main-title {
-  font-size: 64px;
-  font-weight: 900;
-  margin-bottom: 16px;
-  color: var(--spotify-green);
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   position: relative;
   z-index: 1;
 }
 
 .subtitle {
-  font-size: 24px;
-  margin-bottom: 16px;
-  color: var(--spotify-light-gray);
-  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
   position: relative;
   z-index: 1;
 }
 
 .description {
-  font-size: 18px;
-  max-width: 700px;
-  margin: 0 auto;
-  color: var(--spotify-light-gray);
+  font-size: 16px;
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+  color: var(--text-muted);
   line-height: 1.6;
   font-weight: 400;
   position: relative;
@@ -60,26 +55,26 @@
 
 .upload-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-radius: 24px;
-  padding: 40px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 32px;
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   transition: all 0.3s ease;
 }
 
 .upload-card:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(29, 185, 84, 0.4);
-  transform: translateY(-4px);
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(29, 185, 84, 0.3);
+  transform: translateY(-2px);
 }
 
 .upload-card h2 {
-  color: var(--spotify-white);
-  margin-bottom: 32px;
-  font-size: 28px;
-  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 600;
   text-align: center;
 }
 
