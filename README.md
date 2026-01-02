@@ -193,13 +193,12 @@ docker run -p 8080:8080 formath-backend
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Support
+<div align="center">
 
-For support, email support@formath.app or create an issue in the GitHub repository.
+**Made with &lt;3 by [Shashwat Raj](https://github.com/shashwatraj)**
 
-## Acknowledgments
+*Because everyone deserves to look good without the stress*
 
-- OpenAI for GPT-4 API
-- Wolfram Alpha for mathematical computation
-- Tesseract.js for OCR capabilities
-- The React and Node.js communities
+[🌟 Star this repo](https://github.com/darthvader58/whatrobe) • [🐛 Report Bug](https://github.com/darthvader58/whatrobe/issues) • [💡 Request Feature](https://github.com/darthvader58/whatrobe/issues)
+
+</div>
