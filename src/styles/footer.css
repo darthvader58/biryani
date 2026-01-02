@@ -26,7 +26,7 @@
 
 .footer-content {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 40px;
   padding: 60px 0 40px;
 }
@@ -110,7 +110,7 @@
   font-size: 14px;
   line-height: 1.6;
   margin: 0;
-  max-width: 280px;
+  max-width: 320px;
 }
 
 .footer-bottom {
@@ -124,10 +124,21 @@
   align-items: center;
 }
 
-.footer-bottom p {
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer-left p {
   color: var(--text-muted);
   font-size: 14px;
   margin: 0;
+}
+
+.made-with-love {
+  color: var(--text-secondary) !important;
+  font-size: 13px !important;
 }
 
 .social-links {

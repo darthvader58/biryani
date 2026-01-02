@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import Home from './pages/home';
 import Signin from './pages/signin';
 import Dashboard from './pages/dashboard';
+import Feedback from './pages/feedback';
 import NotFound from './pages/notFound';
 import './App.css';
 
@@ -144,6 +145,9 @@ function App() {
                 </Route>
                 <Route path="/dashboard">
                   <Dashboard user={user} />
+                </Route>
+                <Route path="/feedback">
+                  <Feedback user={user} />
                 </Route>
                 <Route path="*">
                   <NotFound />

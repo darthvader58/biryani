@@ -100,6 +100,20 @@ async function initializeDatabase() {
       )
     `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS feedback (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255),
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        message TEXT NOT NULL,
+        status VARCHAR(20) DEFAULT 'new',
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Database initialization error:', error);
@@ -429,6 +443,85 @@ async function updateUserAnalytics(userEmail, analysis) {
     console.error('Analytics update error:', error);
   }
 }
+
+// Feedback submission endpoint
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const { name, email, type, message, userId, timestamp } = req.body;
+
+    console.log('=== FEEDBACK SUBMISSION ===');
+    console.log('Name:', name);
+    console.log('Email:', email);
+    console.log('Type:', type);
+    console.log('Message:', message);
+
+    // Validate required fields
+    if (!name || !email || !type || !message) {
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        required: ['name', 'email', 'type', 'message']
+      });
+    }
+
+    // Save feedback to database
+    const result = await pool.query(`
+      INSERT INTO feedback (user_id, name, email, type, message, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id, created_at
+    `, [userId || null, name, email, type, message, timestamp || new Date().toISOString()]);
+
+    const feedbackId = result.rows[0].id;
+    const createdAt = result.rows[0].created_at;
+
+    console.log('Feedback saved with ID:', feedbackId);
+
+    res.json({
+      success: true,
+      id: feedbackId,
+      message: 'Feedback submitted successfully',
+      createdAt: createdAt
+    });
+
+  } catch (error) {
+    console.error('=== FEEDBACK SUBMISSION ERROR ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      error: 'Failed to submit feedback',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Get all feedback (admin endpoint)
+app.get('/api/feedback', async (req, res) => {
+  try {
+    const { status, limit = 50, offset = 0 } = req.query;
+    
+    let query = 'SELECT * FROM feedback';
+    let params = [];
+    
+    if (status) {
+      query += ' WHERE status = $1';
+      params.push(status);
+    }
+    
+    query += ' ORDER BY created_at DESC LIMIT $' + (params.length + 1) + ' OFFSET $' + (params.length + 2);
+    params.push(limit, offset);
+
+    const result = await pool.query(query, params);
+
+    res.json({
+      feedback: result.rows,
+      total: result.rows.length
+    });
+
+  } catch (error) {
+    console.error('Feedback retrieval error:', error);
+    res.status(500).json({ error: 'Failed to retrieve feedback' });
+  }
+});
 
 // Legacy endpoints for compatibility
 app.get('/userFeedback/:email/', async (req, res) => {
