@@ -15,6 +15,7 @@ const Dashboard = ({ user }) => {
 
     const fetchUserRecords = useCallback(async () => {
         try {
+            // Use relative URL for API calls
             const response = await axios.get(`/api/dashboard/${user.email}`);
             const data = response.data;
             
@@ -43,9 +44,10 @@ const Dashboard = ({ user }) => {
             
             setLoading(false);
         } catch (err) {
-            // Fallback to legacy endpoint
+            console.error('Error fetching dashboard data:', err);
+            // Fallback to legacy endpoint with relative URL
             try {
-                const legacyResponse = await axios.get(`http://localhost:8080/userFeedback/${user.email}/`);
+                const legacyResponse = await axios.get(`/userFeedback/${user.email}/`);
                 setRecords(legacyResponse.data.results || []);
                 setStats({
                     total_problems: (legacyResponse.data.numConceptual || 0) + (legacyResponse.data.numComputational || 0),
@@ -54,11 +56,12 @@ const Dashboard = ({ user }) => {
                     correct_solutions: 0,
                     avg_confidence: 0
                 });
+                setLoading(false);
             } catch (legacyErr) {
-                setError('Failed to load your records');
-                console.error('Error fetching records:', legacyErr);
+                console.error('Error fetching legacy records:', legacyErr);
+                setError('Failed to load your records. Please try again later.');
+                setLoading(false);
             }
-            setLoading(false);
         }
     }, [user]);
 
