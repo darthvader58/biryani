@@ -8,7 +8,7 @@ const Navbar = ({ user }) => {
             <div className="nav-container">
                 <Link to="/" className="nav-logo">
                     <div className="logo-icon">
-                        <img src="/logo.png" alt="ForMath Logo" width="28" height="28" />
+                        <img src="/logo.png" alt="ForMath Logo" width="24" height="24" />
                     </div>
                     <span className="logo-text">ForMath</span>
                 </Link>

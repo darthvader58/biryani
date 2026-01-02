@@ -9,7 +9,7 @@ function Footer() {
           <div className="footer-section">
             <div className="footer-logo">
               <div className="logo-icon">
-                <span>∫</span>
+                <img src="/logo.png" alt="ForMath Logo" width="20" height="20" />
               </div>
               <span className="logo-text">ForMath</span>
             </div>
