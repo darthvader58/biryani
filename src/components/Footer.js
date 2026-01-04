@@ -38,7 +38,7 @@ function Footer() {
         <div className="footer-bottom">
           <div className="footer-bottom-content">
             <div className="footer-left">
-              <p>&copy; 2024 ForMath. All rights reserved.</p>
+              <p>&copy; 2026 ForMath. All rights reserved.</p>
               <p className="made-with-love">Made with &lt;3 by Shashwat Raj</p>
             </div>
             <div className="social-links">
