@@ -195,7 +195,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 <div align="center">
 
-**Made with &lt;3 by [Shashwat Raj](https://github.com/shashwatraj)**
+**Made with &lt;3 by [Shashwat Raj](https://github.com/shashwatraj), [Vaibhav Urs](https://github.com/vurs1), [Sahaj Rastogi](https://github.com/sahajrastogi), [Ananya Bhargava](https://github.com/aloobhaalu)**
 
 *Because everyone deserves to look good without the stress*
 
