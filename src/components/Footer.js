@@ -39,7 +39,7 @@ function Footer() {
           <div className="footer-bottom-content">
             <div className="footer-left">
               <p>&copy; 2026 ForMath. All rights reserved.</p>
-              <p className="made-with-love">Made with &lt;3 by Shashwat Raj</p>
+              <p className="made-with-love">Made with &lt;3 by Shashwat Raj, Sahaj Rastogi</p>
             </div>
             <div className="social-links">
               <a href="https://github.com/darthvader58/biryani" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
