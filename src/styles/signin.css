@@ -1,292 +1,169 @@
-.signin-container {
-  min-height: 100vh;
+/* ============================================================
+   Sign in — ForMath revamp
+   ============================================================ */
+
+.signin-wrap {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: transparent;
-  position: relative;
+  padding: 80px 24px 40px;
+  min-height: calc(100vh - var(--nav-height));
 }
-
-
 
 .signin-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  padding: 48px;
-  max-width: 480px;
   width: 100%;
-  text-align: center;
-  box-shadow: var(--glass-shadow);
-  position: relative;
-  z-index: 1;
-  transition: all 0.3s ease;
-}
-
-.signin-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(29, 185, 84, 0.3);
-  transform: translateY(-4px);
-}
-
-/* Login Section */
-.login-section h1 {
-  color: var(--spotify-white);
-  font-size: 36px;
-  font-weight: 900;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-}
-
-.tagline {
-  color: var(--spotify-green);
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.description {
-  color: var(--spotify-light-gray);
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: 40px;
   max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-.google-signin-btn {
-  background: var(--spotify-white);
-  color: var(--spotify-black);
-  border: none;
-  padding: 16px 32px;
-  border-radius: 50px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.signin-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.signin-mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto 16px;
+}
+
+.signin-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--t1);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.signin-sub {
+  font-size: 13px;
+  color: var(--t2);
+  line-height: 1.55;
+}
+
+/* ---- Google button ---- */
+.goog-btn {
+  width: 100%;
+  padding: 12px 18px;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--ease);
 }
 
-.google-signin-btn:hover {
-  background: #f5f5f5;
-  transform: scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+.goog-btn:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
 }
 
-.google-icon {
-  width: 20px;
-  height: 20px;
-}
-
-/* Profile Section */
+/* ---- Profile state ---- */
 .profile-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
-.profile-image {
-  width: 120px;
-  height: 120px;
+.profile-avatar {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
+  border: 2px solid var(--green-border);
   object-fit: cover;
-  border: 4px solid var(--spotify-green);
-  box-shadow: 0 8px 25px rgba(29, 185, 84, 0.3);
-  transition: all 0.3s ease;
 }
 
-.profile-section:hover .profile-image {
-  transform: scale(1.05);
-  box-shadow: 0 12px 30px rgba(29, 185, 84, 0.4);
-}
-
-.profile-section h2 {
-  color: var(--spotify-white);
-  font-size: 32px;
-  font-weight: 900;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-}
-
-.profile-name {
-  color: var(--spotify-white);
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.profile-email {
-  color: var(--spotify-light-gray);
-  font-size: 16px;
-  margin: 0;
-  font-weight: 500;
-}
-
-.profile-actions {
+.signin-actions {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   width: 100%;
-  max-width: 280px;
-  margin-top: 20px;
 }
 
-.logout-btn {
-  background: rgba(244, 67, 54, 0.1);
-  color: #ff6b6b;
-  border: 2px solid rgba(244, 67, 54, 0.2);
-  padding: 14px 28px;
-  border-radius: 50px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+.signin-actions .btn { width: 100%; }
+
+/* ---- Warning panel ---- */
+.signin-warning {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--t2);
+  line-height: 1.5;
 }
 
-.logout-btn:hover {
-  background: rgba(244, 67, 54, 0.2);
-  border-color: rgba(244, 67, 54, 0.4);
-  transform: scale(1.02);
+.signin-warning strong {
+  color: var(--amber);
+  display: block;
+  margin-bottom: 6px;
 }
 
-.home-link {
-  background: var(--spotify-green);
-  color: var(--spotify-black);
+.signin-warning code {
+  background: var(--s3);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--t1);
+  font-size: 11px;
+}
+
+.signin-fineprint {
+  font-size: 11px;
+  color: var(--t3);
+  text-align: center;
+  margin-top: 18px;
+  line-height: 1.5;
+}
+
+/* Reuse btn styles from home.css if loaded; otherwise define locally */
+.signin-card .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all var(--ease);
   text-decoration: none;
-  padding: 14px 28px;
-  border-radius: 50px;
-  font-size: 14px;
-  font-weight: 900;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.3);
+  cursor: pointer;
 }
-
-.home-link:hover {
-  background: var(--spotify-green-hover);
-  transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(29, 185, 84, 0.4);
+.signin-card .btn-primary { background: var(--green); color: #000; }
+.signin-card .btn-primary:hover { background: var(--green-hover); }
+.signin-card .btn-secondary {
+  background: var(--s2);
+  color: var(--t1);
+  border: 1px solid var(--bd);
 }
-
-/* Debug/Error Messages */
-.signin-card > div[style*="background: #ff4757"] {
-  background: rgba(244, 67, 54, 0.1) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(244, 67, 54, 0.2) !important;
-  border-radius: 12px !important;
-  color: #ff6b6b !important;
-  margin-top: 32px !important;
-  padding: 20px !important;
+.signin-card .btn-secondary:hover { background: var(--s3); }
+.signin-card .btn-ghost {
+  background: transparent;
+  color: var(--t2);
+  border: 1px solid var(--bd);
 }
-
-.signin-card > div[style*="background: #ff4757"] strong {
-  color: #ff5252 !important;
-}
-
-.signin-card > div[style*="background: #ff4757"] code {
-  background: rgba(0, 0, 0, 0.3) !important;
-  color: var(--spotify-white) !important;
-  padding: 4px 8px !important;
-  border-radius: 6px !important;
-  font-family: 'JetBrains Mono', monospace !important;
-}
-
-.signin-card > div[style*="background: #ff4757"] button {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: var(--spotify-white) !important;
-  border: 1px solid var(--glass-border) !important;
-  border-radius: 50px !important;
-  padding: 10px 20px !important;
-  font-weight: 700 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.1em !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-}
-
-.signin-card > div[style*="background: #ff4757"] button:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  transform: scale(1.02) !important;
-}
-
-/* Success Message */
-.signin-card > div[style*="color: #818384"] {
-  background: rgba(29, 185, 84, 0.1) !important;
-  color: var(--spotify-green) !important;
-  padding: 12px 16px !important;
-  border-radius: 8px !important;
-  border: 1px solid rgba(29, 185, 84, 0.2) !important;
-  margin-top: 24px !important;
-  font-weight: 600 !important;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .signin-card {
-    padding: 32px 24px;
-    margin: 20px;
-  }
-  
-  .login-section h1 {
-    font-size: 28px;
-  }
-  
-  .tagline {
-    font-size: 16px;
-  }
-  
-  .description {
-    font-size: 14px;
-  }
-  
-  .profile-image {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .profile-section h2 {
-    font-size: 24px;
-  }
-  
-  .profile-name {
-    font-size: 20px;
-  }
-}
+.signin-card .btn-ghost:hover { color: var(--t1); background: var(--s1); }
+.signin-card .btn-lg { padding: 13px 26px; font-size: 14px; font-weight: 700; }
+.signin-card .btn-sm { padding: 6px 12px; font-size: 12px; }
 
 @media (max-width: 480px) {
-  .signin-container {
-    padding: 16px;
-  }
-  
-  .signin-card {
-    padding: 24px 20px;
-  }
-  
-  .login-section h1 {
-    font-size: 24px;
-  }
+  .signin-wrap { padding: 48px 18px 32px; }
+  .signin-card { padding: 28px 22px; }
 }

@@ -1,68 +1,104 @@
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+/* ForMath — Global base styles (replaces index.css) */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css');
+
+/* --- tokens (Edtech variant) --- */
+:root {
+  --green:         #1db954;
+  --green-hover:   #1ed760;
+  --green-dim:     rgba(29,185,84,0.10);
+  --green-dim2:    rgba(29,185,84,0.05);
+  --green-border:  rgba(29,185,84,0.20);
+
+  --red:   #ff4757;
+  --amber: #f59e0b;
+  --blue:  #3b82f6;
+
+  --bg:  #0a0a0f;
+  --s1:  #0e0e18;
+  --s2:  #131320;
+  --s3:  #1a1a2a;
+  --s4:  #222234;
+
+  --bd:  rgba(255,255,255,0.10);
+  --bd2: rgba(255,255,255,0.04);
+
+  --t1: #eeeef3;
+  --t2: #8888a0;
+  --t3: #505062;
+
+  --radius:      14px;
+  --radius-sm:    8px;
+  --radius-pill: 999px;
+
+  --nav-height: 64px;
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', 'JetBrains Mono', monospace;
+
+  --ease: 0.18s ease;
+
+  /* Legacy compat — keep old vars working until referencing files are migrated */
+  --spotify-green:        var(--green);
+  --spotify-green-hover:  var(--green-hover);
+  --spotify-black:        var(--bg);
+  --spotify-white:        var(--t1);
+  --spotify-light-gray:   var(--t2);
+  --spotify-gray:         var(--s4);
+  --dark-bg:              var(--bg);
+  --darker-bg:            #050509;
+  --card-bg:              var(--s1);
+  --text-primary:         var(--t1);
+  --text-secondary:       var(--t2);
+  --text-muted:           var(--t3);
+  --glass-bg:             var(--s1);
+  --glass-border:         var(--bd);
+  --glass-shadow:         0 4px 24px rgba(0,0,0,0.4);
+  --gradient-primary:     linear-gradient(135deg, var(--green) 0%, var(--green-hover) 100%);
+}
+
+/* --- reset --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
 
 body {
-  margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--t1);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #0e4b99 100%);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 15% 10%, rgba(29,185,84,0.04) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 50% at 85% 85%, rgba(99,102,241,0.04) 0%, transparent 100%);
   background-attachment: fixed;
   min-height: 100vh;
-  color: #ffffff;
-  overflow-x: hidden;
-  position: relative;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(29, 185, 84, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(135, 206, 235, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(0, 191, 255, 0.05) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
+button { font-family: inherit; cursor: pointer; }
+textarea, input, select { font-family: inherit; }
+code { font-family: var(--font-mono); }
+
+/* --- layout helpers --- */
+.App {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+.content {
+  flex: 1;
+  padding-top: var(--nav-height);
 }
 
-code {
-  font-family: 'JetBrains Mono', 'Fira Code', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+/* --- scrollbar --- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--s1); }
+::-webkit-scrollbar-thumb { background: var(--s4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--t3); }
 
-* {
-  box-sizing: border-box;
-}
+/* --- selection --- */
+::selection { background: var(--green-dim); color: var(--t1); }
 
-#root {
-  min-height: 100vh;
-}
-
-/* Spotify Green + Light Blue Theme Variables */
-:root {
-  --spotify-green: #1db954;
-  --spotify-green-hover: #1ed760;
-  --light-blue: #87ceeb;
-  --sky-blue: #00bfff;
-  --powder-blue: #b0e0e6;
-  --dark-bg: #0a0a0a;
-  --darker-bg: #050505;
-  --card-bg: rgba(15, 23, 42, 0.8);
-  --glass-bg: rgba(30, 41, 59, 0.4);
-  --glass-border: rgba(148, 163, 184, 0.2);
-  --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #64748b;
-  --gradient-primary: linear-gradient(135deg, #1db954 0%, #00bfff 50%, #87ceeb 100%);
-  --gradient-secondary: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  --gradient-accent: linear-gradient(135deg, #1ed760 0%, #b0e0e6 100%);
-  --gradient-hover: linear-gradient(135deg, #1ed760 0%, #00bfff 100%);
-}
+/* --- KaTeX --- */
+.katex-display { overflow-x: auto; padding: 4px 0; margin: 0; }
+.katex { color: var(--t1); }
